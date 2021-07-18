@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+
 html,
 body {
   padding: 0;
@@ -13,4 +15,11 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.titleFont{
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+}
+.bodyFont{
+    font-family: 'Hiragino Mincho ProN', 'Times New Roman', 'Yu Mincho', 'serif';
 }
