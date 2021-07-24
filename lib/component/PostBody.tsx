@@ -21,7 +21,7 @@ const PostBody: React.FunctionComponent<{ post: Post }> = ({ post }) => {
                     content.link
                         ? (
                             <div key={i} className="leading-6 my-3">
-                                <a href={content.link} className="text-gray-600 underline my-3" target="_blank">{content.text}</a>
+                                <a href={content.link} className="text-gray-600 underline my-3" target="_blank" rel="noreferrer">{content.text}</a>
                             </div>
                         )
                         : <div key={i} className="leading-6 my-3">{content.text}</div>

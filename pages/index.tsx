@@ -19,7 +19,7 @@ const Index = ({ posts, postsIndex }: InferGetStaticPropsType<typeof getStaticPr
         <div>
             <Layout postsIndex={postsIndex}>
                 {posts.map((post) => (
-                    <PostBody post={post} />
+                    <PostBody key={post.id} post={post} />
                 ))}
             </Layout>
         </div>

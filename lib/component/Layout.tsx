@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { AiFillGithub, AiOutlineTwitter } from 'react-icons/ai';
 import { SiNotion } from 'react-icons/si';
 // import { RiUnsplashFill } from 'react-icons/ri';
+import Image from 'next/image';
 
 type HierarchyIndex = {
     year: string,
@@ -74,16 +75,21 @@ const Layout: React.FunctionComponent<{
                 setOpenedYears([...openedYears, year]);
                 setOpenedYearMonths([...openedYearMonths, `${year}${month}`]);
             }
-        }, [ymd])
+        }, [ymd, setOpenedYears, setOpenedYearMonths]);
 
         return (
             <div>
                 <div className="min-h-screen">
-                    <img
-                        className="w-screen h-48 md:h-64 object-cover"
-                        src="https://source.unsplash.com/peaTniZsUQs"
-                        alt="top"
-                    />
+                    <div className="w-screen h-48 md:h-64 relative">
+                        <Image
+                            // src="/peaTniZsUQs.jpg"
+                            src="https://source.unsplash.com/peaTniZsUQs"
+                            alt="top"
+                            layout="fill"
+                            objectFit="cover"
+                            quality={100}
+                        />
+                    </div>
                     <div className=" max-w-6xl mx-auto px-8">
                         <div className="text-white absolute top-4 right-4 cursor-pointer text-2xl md:text-3xl flex">
                             <AiOutlineTwitter
