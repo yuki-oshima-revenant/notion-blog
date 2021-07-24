@@ -1,56 +1,62 @@
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
-import { getPosts, Post } from '@/lib/util/notion';
+import { getDatabaseData, getPostIndex, getPosts, Post, PostIndex } from '@/lib/util/notion';
 import PostBody from '@/lib/component/PostBody';
 import Layout from '@/lib/component/Layout';
+import Head from "next/head";
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const posts = await getPosts();
-
-    const paths = posts.map((post) => ({
+    const database = await getDatabaseData();
+    const postsIndex = getPostIndex(database);
+    const paths = postsIndex.map((index) => ({
         params: {
-            yyyymmdd: post.title || undefined,
+            yyyymmdd: index.ymd,
         }
     }));
     return { paths, fallback: 'blocking' }
 };
 
-export const getStaticProps: GetStaticProps<{ post: Post | null, posts: Post[] }> = async ({ params, preview }) => {
-    const posts = await getPosts();
+export const getStaticProps: GetStaticProps<{ post: Post | null, postsIndex: PostIndex[] }> = async ({ params, preview }) => {
+    const database = await getDatabaseData();
+    const postsIndex = getPostIndex(database);
 
-    const notFoundResponse = {
-        props: {
-            post: null,
-            posts
-        },
-        redirect: {
-            destination: '/404'
-        }
-    };
-    if (!params?.yyyymmdd || Array.isArray(params.yyyymmdd)) {
-        return notFoundResponse;
-    }
-    const targetPost = posts.find((post) => post.title === params.yyyymmdd);
-    if (targetPost) {
+    const targetPostIndex = postsIndex.find((index) => index.ymd === params?.yyyymmdd);
+    if (targetPostIndex) {
+        const targetPost = await getPosts(database, [targetPostIndex.id]);
         return {
             props: {
-                post: targetPost,
-                posts
+                post: targetPost[0],
+                postsIndex
             },
             revalidate: 60,
         }
-    } else {
-        return notFoundResponse;
-    }
 
+    } else {
+        return {
+            props: {
+                post: null,
+                postsIndex
+            },
+            redirect: {
+                destination: '/404'
+            }
+        };;
+
+    }
 }
 
-const Index = ({ post, posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Index = ({ post, postsIndex }: InferGetStaticPropsType<typeof getStaticProps>) => {
     if (!post) return <></>;
 
     return (
-        <Layout posts={posts}>
-            <PostBody post={post} />
-        </Layout>
+        <div>
+            <Head>
+                <title>{`${post.title} / Cartesian Theater`}</title>
+            </Head>
+            <Layout postsIndex={postsIndex} ymd={post.ymd}>
+                <PostBody post={post} />
+            </Layout>
+
+        </div>
     )
 };
 

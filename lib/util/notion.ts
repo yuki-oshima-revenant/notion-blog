@@ -1,7 +1,20 @@
 import { Client } from '@notionhq/client';
+import { DatabasesQueryResponse } from '@notionhq/client/build/src/api-endpoints';
+import moment from 'moment';
+
+export type PostIndex = {
+    id: string,
+    ymd: string,
+    year: string,
+    month: string,
+    date: string,
+}
 
 export type Post = {
+    id: string,
     title: string,
+    date: string,
+    ymd: string,
     createdTs: string,
     lastEditedTs: string,
     contents: {
@@ -16,8 +29,8 @@ const notion = new Client({
     auth: process.env.NOTION_SECRET,
 });
 
-export const getPosts = async () => {
-    const response = await notion.databases.query({
+export const getDatabaseData = async () => {
+    return notion.databases.query({
         database_id: process.env.NOTION_DATABASE_ID || '',
         filter: {
             or: [
@@ -28,22 +41,43 @@ export const getPosts = async () => {
                     },
                 },
             ]
-        }
+        },
+        sorts: [
+            {
+                property: 'date',
+                direction: 'descending',
+            },
+        ]
     });
-    const posts: Post[] = [];
-    for (const result of response.results) {
-        const postProperties = await notion.pages.retrieve({ page_id: result.id });
-        // console.dir(postProperties, { depth: null });
+};
+
+
+export const getPosts = async (response: DatabasesQueryResponse, ids?: string[]) => {
+    const postContentPromises = [];
+    if (ids) {
+        ids.forEach(id => {
+            postContentPromises.push(notion.blocks.children.list({ block_id: id }));
+        });
+    } else {
+        for (const result of response.results) {
+            postContentPromises.push(notion.blocks.children.list({ block_id: result.id }));
+        }
+    }
+    const postContents = await Promise.all(postContentPromises);
+    const posts: Post[] = postContents.map((postContent, i) => {
+        const page = response.results[i];
+        // @ts-ignore
+        const date: string = page.properties.date.date.start;
         const post: Post = {
+            id: page.id,
             // @ts-ignore
-            title: postProperties.properties.post.title[0].text.content,
-            createdTs: postProperties.created_time,
-            lastEditedTs: postProperties.last_edited_time,
+            title: page.properties.post.title[0].text.content,
+            date,
+            ymd: date.replace(/-/g, ''),
+            createdTs: page.created_time,
+            lastEditedTs: page.last_edited_time,
             contents: []
         }
-
-        const postContent = await notion.blocks.children.list({ block_id: result.id });
-        // console.dir(postContent, { depth: null });
         postContent.results.forEach((result) => {
             switch (result.type) {
                 case 'paragraph': post.contents.push({
@@ -56,7 +90,24 @@ export const getPosts = async () => {
                     break;
             }
         });
-        posts.push(post);
-    }
-    return posts;
+        return post;
+    });
+    return posts
 }
+
+export const getPostIndex = (response: DatabasesQueryResponse) => {
+    const postIndex: PostIndex[] = response.results.map((result) => {
+        // @ts-ignore
+        const ymd = (result.properties.date.date.start as string).replace(/-/g, '');
+        return {
+            id: result.id,
+            // @ts-ignore
+            title: result.properties.post.title[0].text.content as string,
+            ymd,
+            year: ymd.substring(0, 4),
+            month: ymd.substring(4, 6),
+            date: ymd.substring(6, 8),
+        }
+    });
+    return postIndex;
+};

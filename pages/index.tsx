@@ -1,25 +1,29 @@
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { Post, getPosts } from '@/lib/util/notion';
+import { Post, getPosts, getDatabaseData, PostIndex, getPostIndex } from '@/lib/util/notion';
 import PostBody from '@/lib/component/PostBody';
 import Layout from '@/lib/component/Layout';
 
-export const getStaticProps: GetStaticProps<{ posts: Post[] }> = async () => {
-    const posts = await getPosts();
+export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostIndex[] }> = async () => {
+    const database = await getDatabaseData();
     return {
         props: {
-            posts
+            posts: await getPosts(database),
+            postsIndex: getPostIndex(database)
         }
     }
 }
 
-const Index = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Index = ({ posts, postsIndex }: InferGetStaticPropsType<typeof getStaticProps>) => {
 
     return (
-        <Layout posts={posts}>
-            {posts.map((post) => (
-                <PostBody post={post} />
-            ))}
-        </Layout>
+        <div>
+            <Layout postsIndex={postsIndex}>
+                {posts.map((post) => (
+                    <PostBody post={post} />
+                ))}
+            </Layout>
+        </div>
+
     );
 }
 export default Index;
