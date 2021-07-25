@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap');
 html,
 body {
   padding: 0;
@@ -21,5 +21,5 @@ a {
     font-family: 'Inter', 'Helvetica Neue', sans-serif;
 }
 .bodyFont{
-    font-family: 'Hiragino Mincho ProN', 'Times New Roman', 'Yu Mincho', 'serif';
+    font-family: 'Hiragino Mincho ProN', 'Times New Roman', 'Noto Serif JP', 'Yu Mincho', 'serif';
 }

@@ -12,8 +12,13 @@ const PostBody: React.FunctionComponent<{ post: Post }> = ({ post }) => {
                     className="text-2xl font-bold cursor-pointer"
                     onClick={() => { router.push(`/post/${post.ymd}`) }}
                 >{post.title}</h2>
-                <div className="text-gray-500 text-sm">
-                    {`Last Edited: ${moment(post.lastEditedTs).format('YYYY-MM-DD HH:mm:ss')}`}
+                <div className="text-gray-500 text-sm my-1">
+                    <div>
+                        {`Date: ${post.date}`}
+                    </div>
+                    <div>
+                        {`Last Edited: ${moment(post.lastEditedTs).format('YYYY-MM-DD HH:mm:ss')}`}
+                    </div>
                 </div>
             </div>
             <div className="bodyFont whitespace-normal break-words">

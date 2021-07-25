@@ -80,7 +80,7 @@ const Layout: React.FunctionComponent<{
         return (
             <div>
                 <div className="min-h-screen">
-                    <div className="w-screen h-48 md:h-64 relative">
+                    <div className="w-screen h-40 md:h-64 relative">
                         <Image
                             // src="/peaTniZsUQs.jpg"
                             src="https://source.unsplash.com/peaTniZsUQs"
@@ -100,7 +100,7 @@ const Layout: React.FunctionComponent<{
                                 onClick={() => { window.open('https://github.com/yuki-oshima-revenant') }}
                             />
                         </div>
-                        <div className="my-8">
+                        <div className="mt-10 mb-8">
                             <h1
                                 className="font-bold text-4xl md:text-7xl text-center tracking-tighter titleFont cursor-pointer"
                                 onClick={() => { route.push('/') }}

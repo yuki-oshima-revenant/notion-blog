@@ -39,8 +39,7 @@ export const getStaticProps: GetStaticProps<{ post: Post | null, postsIndex: Pos
             redirect: {
                 destination: '/404'
             }
-        };;
-
+        };
     }
 }
 
