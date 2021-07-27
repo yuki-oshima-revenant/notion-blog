@@ -21,6 +21,10 @@ const Index = ({ posts, postsIndex }: InferGetStaticPropsType<typeof getStaticPr
         <div>
             <Head>
                 <title>Cartesian Theater</title>
+                <meta property="og:title" content="Cartesian Theater" />
+                <meta property="og:image" content="https://diary.unronritaro.net/top.png" />
+                <meta name="twitter:card" content="summary" />
+                <meta name="twitter:image" content="https://diary.unronritaro.net/top.png" />
             </Head>
             <Layout postsIndex={postsIndex}>
                 {posts.map((post) => (
