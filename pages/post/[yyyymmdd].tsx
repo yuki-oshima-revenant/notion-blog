@@ -50,6 +50,10 @@ const Index = ({ post, postsIndex }: InferGetStaticPropsType<typeof getStaticPro
         <div>
             <Head>
                 <title>{`${post.title} / Cartesian Theater`}</title>
+                <meta property="og:title" content={`${post.title} / Cartesian Theater`} />
+                <meta property="og:image" content={`https://diary.unronritaro.net/api/ogp?title=${encodeURIComponent(post.title)}`} />
+                <meta name="twitter:image" content={`https://diary.unronritaro.net/api/ogp?title=${encodeURIComponent(post.title)}`} />
+                <meta name="twitter:card" content="summary_large_image" />
             </Head>
             <Layout postsIndex={postsIndex} ymd={post.ymd}>
                 <PostBody post={post} />

@@ -84,6 +84,7 @@ const Layout: React.FunctionComponent<{
                         <Image
                             // src="/peaTniZsUQs.jpg"
                             src="https://source.unsplash.com/peaTniZsUQs"
+                            // src="https://source.unsplash.com/collection/82DOKHC7I9w"
                             alt="top"
                             layout="fill"
                             objectFit="cover"
@@ -120,7 +121,7 @@ const Layout: React.FunctionComponent<{
                         <div>
                             <div className="grid grid-cols-1 md:grid-cols-6">
                                 <div className="order-2 md:order-first md:col-span-1">
-                                    <div className="sticky top-8 overflow-auto">
+                                    <div className="md:sticky md:top-8 overflow-auto">
                                         <ul>
                                             {hierarchyIndex.map(({ year, months }) => (
                                                 <IndexList
