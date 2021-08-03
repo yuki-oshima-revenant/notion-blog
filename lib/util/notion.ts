@@ -52,30 +52,30 @@ export const getDatabaseData = async () => {
 };
 
 
-export const getPosts = async (response: DatabasesQueryResponse, ids?: string[]) => {
+export const getPosts = async (databaseResponse: DatabasesQueryResponse, ids?: string[]) => {
     const postContentPromises = [];
     if (ids) {
         ids.forEach(id => {
             postContentPromises.push(notion.blocks.children.list({ block_id: id }));
         });
     } else {
-        for (const result of response.results) {
+        for (const result of databaseResponse.results) {
             postContentPromises.push(notion.blocks.children.list({ block_id: result.id }));
         }
     }
     const postContents = await Promise.all(postContentPromises);
     const posts: Post[] = postContents.map((postContent, i) => {
-        const page = response.results[i];
+        const page = ids ? databaseResponse.results.find((result) => result.id === ids[i]) : databaseResponse.results[i];
         // @ts-ignore
         const date: string = page.properties.date.date.start;
         const post: Post = {
-            id: page.id,
+            id: page?.id || '',
             // @ts-ignore
             title: page.properties.post.title[0].text.content,
             date,
             ymd: date.replace(/-/g, ''),
-            createdTs: page.created_time,
-            lastEditedTs: page.last_edited_time,
+            createdTs: page?.created_time || '',
+            lastEditedTs: page?.last_edited_time || '',
             contents: []
         }
         postContent.results.forEach((result) => {
@@ -92,7 +92,7 @@ export const getPosts = async (response: DatabasesQueryResponse, ids?: string[])
         });
         return post;
     });
-    return posts
+    return posts;
 }
 
 export const getPostIndex = (response: DatabasesQueryResponse) => {

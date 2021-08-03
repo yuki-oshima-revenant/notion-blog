@@ -6,6 +6,7 @@ import Head from "next/head";
 
 export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostIndex[] }> = async () => {
     const database = await getDatabaseData();
+    // console.dir(database, { depth: null })
     return {
         props: {
             posts: await getPosts(database),
