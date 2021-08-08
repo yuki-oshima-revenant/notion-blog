@@ -1,0 +1,68 @@
+<html>
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            width: 1200px;
+            height: 630px;
+            display: flex;
+            position: relative;
+            align-items: center;
+            font-family: 'Inter';
+            font-weight: bold;
+            justify-content: center;
+            font-size: 52px;
+        }
+
+        .bgImage {
+            object-fit: cover;
+        }
+
+        .card {
+            position: absolute;
+            width: calc(1200px - 96px);
+            height: calc(630px - 96px);
+            top: 48px;
+            left: 48px;
+            background-color: white;
+            border-radius: 16px;
+        }
+
+        .titleWrap {
+            display: block;
+            position: relative;
+            width: fit-content;
+            margin: 236px auto;
+        }
+
+        .title {
+            letter-spacing: -0.05em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <img class="bgImage" src="https://source.unsplash.com/peaTniZsUQs" width="1200" height="630" />
+        <div class="card">
+            <div class="titleWrap">
+                <span>
+                    20210724 /
+                </span>
+                <span class="title">
+                    Cartesian Theater
+                </span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

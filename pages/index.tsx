@@ -28,8 +28,11 @@ const Index = ({ posts, postsIndex }: InferGetStaticPropsType<typeof getStaticPr
                 <meta name="twitter:image" content="https://diary.unronritaro.net/top.png" />
             </Head>
             <Layout postsIndex={postsIndex}>
-                {posts.map((post) => (
-                    <PostBody key={post.id} post={post} />
+                {posts.map((post, i) => (
+                    <PostBody
+                        key={post.id}
+                        post={post}
+                    />
                 ))}
             </Layout>
         </div>

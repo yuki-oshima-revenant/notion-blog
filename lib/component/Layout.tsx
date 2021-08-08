@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from "react";
 import IndexList from "./IndexList";
 import { useRouter } from 'next/router';
-import { AiFillGithub, AiOutlineTwitter } from 'react-icons/ai';
+import { AiFillGithub, AiOutlineTwitter, AiOutlineArrowRight, AiOutlineArrowLeft } from 'react-icons/ai';
 import { SiNotion } from 'react-icons/si';
 // import { RiUnsplashFill } from 'react-icons/ri';
 import Image from 'next/image';
+import { headerImageLink } from '@/lib/util/const';
 
 type HierarchyIndex = {
     year: string,
@@ -21,11 +22,13 @@ type HierarchyIndex = {
 
 const Layout: React.FunctionComponent<{
     postsIndex: PostIndex[],
-    ymd?: string
+    ymd?: string,
+    pageIndex?: string | null,
 }> = ({
     children,
     postsIndex,
-    ymd
+    ymd,
+    pageIndex
 }) => {
         const route = useRouter();
         const hierarchyIndex = useMemo(() => {
@@ -77,14 +80,14 @@ const Layout: React.FunctionComponent<{
             }
         }, [ymd, setOpenedYears, setOpenedYearMonths]);
 
+        const pageIndexInt = pageIndex ? parseInt(pageIndex, 10) : undefined;
+
         return (
             <div>
                 <div className="min-h-screen">
                     <div className="w-screen h-40 md:h-64 relative">
                         <Image
-                            // src="/peaTniZsUQs.jpg"
-                            src="https://source.unsplash.com/peaTniZsUQs"
-                            // src="https://source.unsplash.com/collection/82DOKHC7I9w"
+                            src={headerImageLink}
                             alt="top"
                             layout="fill"
                             objectFit="cover"
@@ -171,8 +174,29 @@ const Layout: React.FunctionComponent<{
                                         </ul>
                                     </div>
                                 </div>
-                                <div className="col-span-5">
-                                    {children}
+                                <div className="col-span-5 mb-6">
+                                    <div>
+                                        {children}
+                                    </div>
+                                    {(pageIndexInt || !ymd) && (
+                                        <div className="text-2xl flex">
+                                            {(pageIndexInt && pageIndexInt > 1) && (
+                                                <Link href={`/page/${pageIndexInt - 1}`}>
+                                                    <a>
+                                                        <AiOutlineArrowLeft />
+                                                    </a>
+                                                </Link>
+                                            )}
+                                            <div className="flex-grow" />
+                                            {(!ymd && !pageIndex) || (pageIndexInt && pageIndexInt * 10 < postsIndex.length) && (
+                                                <Link href={`/page/${pageIndexInt + 1}`}>
+                                                    <a>
+                                                        <AiOutlineArrowRight />
+                                                    </a>
+                                                </Link>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div >

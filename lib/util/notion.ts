@@ -29,7 +29,9 @@ const notion = new Client({
     auth: process.env.NOTION_SECRET,
 });
 
-export const getDatabaseData = async () => {
+export const getDatabaseData = async (
+    // startCursor?: string, pageSize?: number
+) => {
     return notion.databases.query({
         database_id: process.env.NOTION_DATABASE_ID || '',
         filter: {
@@ -47,7 +49,9 @@ export const getDatabaseData = async () => {
                 property: 'date',
                 direction: 'descending',
             },
-        ]
+        ],
+        // start_cursor: startCursor,
+        // page_size: pageSize
     });
 };
 
