@@ -7,9 +7,10 @@ import Head from "next/head";
 export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostIndex[] }> = async () => {
     const database = await getDatabaseData();
     // console.dir(database, { depth: null })
+    const posts = await getPosts(database);
     return {
         props: {
-            posts: await getPosts(database),
+            posts: posts.splice(0, 10),
             postsIndex: getPostIndex(database)
         },
         revalidate: 60
@@ -27,7 +28,7 @@ const Index = ({ posts, postsIndex }: InferGetStaticPropsType<typeof getStaticPr
                 <meta name="twitter:card" content="summary" />
                 <meta name="twitter:image" content="https://diary.unronritaro.net/top.png" />
             </Head>
-            <Layout postsIndex={postsIndex}>
+            <Layout postsIndex={postsIndex} pageIndex="1">
                 {posts.map((post, i) => (
                     <PostBody
                         key={post.id}

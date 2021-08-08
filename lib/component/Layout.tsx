@@ -178,7 +178,7 @@ const Layout: React.FunctionComponent<{
                                     <div>
                                         {children}
                                     </div>
-                                    {(pageIndexInt || !ymd) && (
+                                    {pageIndexInt && (
                                         <div className="text-2xl flex">
                                             {(pageIndexInt && pageIndexInt > 1) && (
                                                 <Link href={`/page/${pageIndexInt - 1}`}>
