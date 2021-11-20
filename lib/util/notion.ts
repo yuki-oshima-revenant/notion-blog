@@ -1,6 +1,5 @@
 import { Client } from '@notionhq/client';
-import { DatabasesQueryResponse } from '@notionhq/client/build/src/api-endpoints';
-import moment from 'moment';
+import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 
 export type PostIndex = {
     id: string,
@@ -10,6 +9,18 @@ export type PostIndex = {
     date: string,
 }
 
+export type Content = {
+    type: 'paragraph' | 'quote',
+    text: string | null,
+    link: string | null,
+} | {
+    type: 'code',
+    text: string | null,
+    link: string | null,
+    language: string | null
+}
+
+
 export type Post = {
     id: string,
     title: string,
@@ -17,12 +28,7 @@ export type Post = {
     ymd: string,
     createdTs: string,
     lastEditedTs: string,
-    contents: {
-        // やる気が出たら追加
-        type: 'paragraph',
-        text: string | null,
-        link: string | null,
-    }[]
+    contents: Content[]
 }
 
 const notion = new Client({
@@ -56,7 +62,7 @@ export const getDatabaseData = async (
 };
 
 
-export const getPosts = async (databaseResponse: DatabasesQueryResponse, ids?: string[]) => {
+export const getPosts = async (databaseResponse: QueryDatabaseResponse, ids?: string[]) => {
     const postContentPromises = [];
     if (ids) {
         ids.forEach(id => {
@@ -75,7 +81,7 @@ export const getPosts = async (databaseResponse: DatabasesQueryResponse, ids?: s
         const post: Post = {
             id: page?.id || '',
             // @ts-ignore
-            title: page.properties.post.title[0].text.content,
+            title: page?.properties.post.title[0].plain_text,
             date,
             ymd: date.replace(/-/g, ''),
             createdTs: page?.created_time || '',
@@ -86,10 +92,21 @@ export const getPosts = async (databaseResponse: DatabasesQueryResponse, ids?: s
             switch (result.type) {
                 case 'paragraph': post.contents.push({
                     type: result.type,
-                    // @ts-ignore
-                    text: result['paragraph'].text[0]?.text.content || null,
-                    // @ts-ignore
-                    link: result['paragraph'].text[0]?.text.link?.url || null
+                    text: result['paragraph'].text[0]?.plain_text || null,
+                    link: result['paragraph'].text[0]?.href || null,
+                });
+                    break;
+                case 'quote': post.contents.push({
+                    type: result.type,
+                    text: result['quote'].text[0]?.plain_text || null,
+                    link: result['quote'].text[0]?.href || null,
+                });
+                    break;
+                case 'code': post.contents.push({
+                    type: result.type,
+                    text: result['code'].text[0]?.plain_text || null,
+                    link: result['code'].text[0]?.href || null,
+                    language: result['code'].language || null,
                 });
                     break;
             }
@@ -99,7 +116,7 @@ export const getPosts = async (databaseResponse: DatabasesQueryResponse, ids?: s
     return posts;
 }
 
-export const getPostIndex = (response: DatabasesQueryResponse) => {
+export const getPostIndex = (response: QueryDatabaseResponse) => {
     const postIndex: PostIndex[] = response.results.map((result) => {
         // @ts-ignore
         const ymd = (result.properties.date.date.start as string).replace(/-/g, '');

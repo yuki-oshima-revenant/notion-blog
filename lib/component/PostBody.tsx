@@ -2,7 +2,7 @@ import { Post } from "@/lib/util/notion";
 import React from "react";
 import moment from 'moment';
 import { useRouter } from "next/router";
-
+import PostContent from '@/lib/component/PostContent';
 const PostBody: React.FunctionComponent<{
     post: Post,
 }> = ({
@@ -27,13 +27,7 @@ const PostBody: React.FunctionComponent<{
                 </div>
                 <div className="bodyFont whitespace-normal break-words">
                     {post.contents.map((content, i) => (
-                        content.link
-                            ? (
-                                <div key={i} className="leading-6 my-3">
-                                    <a href={content.link} className="text-gray-600 underline my-3" target="_blank" rel="noreferrer">{content.text}</a>
-                                </div>
-                            )
-                            : <div key={i} className="leading-6 my-3">{content.text}</div>
+                        <PostContent postContent={content} key={i} />
                     ))}
                 </div>
             </div>
