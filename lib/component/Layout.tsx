@@ -101,7 +101,7 @@ const Layout: React.FunctionComponent<{
                                 onClick={() => { window.open('https://twitter.com/Re_venant') }}
                             />
                             <AiFillGithub
-                                onClick={() => { window.open('https://github.com/yuki-oshima-revenant') }}
+                                onClick={() => { window.open('https://github.com/yuki-oshima-revenant/notion-blog') }}
                             />
                         </div>
                         <div className="mt-10 mb-8">
