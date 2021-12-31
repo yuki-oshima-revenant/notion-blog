@@ -94,7 +94,7 @@ const Layout: React.FunctionComponent<{
                             quality={100}
                         />
                     </div>
-                    <div className=" max-w-6xl mx-auto px-8">
+                    <div className=" max-w-6xl mx-auto px-4 md:px-8">
                         <div className="text-white absolute top-4 right-4 cursor-pointer text-2xl md:text-3xl flex">
                             <AiOutlineTwitter
                                 className="mr-4"
@@ -104,7 +104,7 @@ const Layout: React.FunctionComponent<{
                                 onClick={() => { window.open('https://github.com/yuki-oshima-revenant/notion-blog') }}
                             />
                         </div>
-                        <div className="mt-10 mb-8">
+                        <div className="mt-8 md:mt-10 mb-6 md:mb-8">
                             <h1
                                 className="font-bold text-4xl md:text-7xl text-center tracking-tighter titleFont cursor-pointer"
                                 onClick={() => { route.push('/') }}

@@ -1,5 +1,8 @@
 import { Client } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import jsdom from 'jsdom';
+const { JSDOM } = jsdom;
+
 
 export type PostIndex = {
     id: string,
@@ -10,7 +13,7 @@ export type PostIndex = {
 }
 
 export type Content = {
-    type: 'paragraph' | 'quote',
+    type: 'paragraph' | 'quote' | 'heading_2' | 'heading_3',
     text: string | null,
     link: string | null,
 } | {
@@ -18,6 +21,12 @@ export type Content = {
     text: string | null,
     link: string | null,
     language: string | null
+} | {
+    type: 'bookmark',
+    link: string | null,
+    title: string | null,
+    description: string | null,
+    ogpImageUrl: string | null,
 }
 
 
@@ -96,6 +105,18 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, ids?: st
                     link: result['paragraph'].text[0]?.href || null,
                 });
                     break;
+                case 'heading_2': post.contents.push({
+                    type: result.type,
+                    text: result['heading_2'].text[0]?.plain_text || null,
+                    link: result['heading_2'].text[0]?.href || null,
+                });
+                    break;
+                case 'heading_3': post.contents.push({
+                    type: result.type,
+                    text: result['heading_3'].text[0]?.plain_text || null,
+                    link: result['heading_3'].text[0]?.href || null,
+                });
+                    break;
                 case 'quote': post.contents.push({
                     type: result.type,
                     text: result['quote'].text[0]?.plain_text || null,
@@ -109,10 +130,57 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, ids?: st
                     language: result['code'].language || null,
                 });
                     break;
+                case 'bookmark':
+                    const link = result['bookmark'].url;
+                    let title = null;
+                    let description = null;
+                    let ogpImageUrl = null
+
+                    post.contents.push({
+                        type: result.type,
+                        link,
+                        title,
+                        description,
+                        ogpImageUrl
+                    });
+                    break;
             }
         });
         return post;
     });
+    const getOgpPromises = []
+    for (const post of posts) {
+        for (const content of post.contents) {
+            if (content.type === 'bookmark' && content.link) {
+                const promise = fetch(content.link, { redirect: 'follow' }).then((res) => res.text()).then((text) => {
+                    const { document } = new JSDOM(text).window;
+                    const metatags = Array.from(document.getElementsByTagName('meta'));
+                    metatags.forEach((meta) => {
+                        const property = meta.getAttribute('property') || meta.getAttribute('name');
+                        switch (property) {
+                            case 'og:title' || 'twitter:title': {
+                                if (content.title) break;
+                                content.title = meta.getAttribute('content'); break;
+                            }
+                            case 'og:description' || 'twitter:description' || 'description': {
+                                if (content.description) break;
+                                content.description = meta.getAttribute('content'); break;
+                            }
+                            case 'og:image' || 'twitter:image': {
+                                if (content.ogpImageUrl) break;
+                                content.ogpImageUrl = meta.getAttribute('content'); break;
+                            }
+                        }
+                    });
+                    if (!content.title || content.title.length === 0) {
+                        content.title = document.getElementsByTagName('title')[0]?.innerText || null;
+                    }
+                });
+                getOgpPromises.push(promise);
+            }
+        }
+    }
+    await Promise.all(getOgpPromises);
     return posts;
 }
 
