@@ -56,7 +56,7 @@ const PostContent: React.FunctionComponent<{ postContent: Content }> = ({
                             </div>
                         </div>
                         {postContent.ogpImageUrl && (
-                            <img src={postContent.ogpImageUrl} className="object-cover h-[104px] md:h-32 w-1/2 md:w-60" alt={postContent.title || ''} />
+                            <img src={postContent.ogpImageUrl} className="object-cover h-[106px] md:h-[130px] w-1/2 md:w-60" alt={postContent.title || ''} />
                         )}
                     </div>
                 );
