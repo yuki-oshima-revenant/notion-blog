@@ -83,7 +83,7 @@ const Layout: React.FunctionComponent<{
         const pageIndexInt = pageIndex ? parseInt(pageIndex, 10) : undefined;
 
         return (
-            <div>
+            <div className="w-full overflow-hidden">
                 <div className="min-h-screen">
                     <div className="w-screen h-40 md:h-64 relative">
                         <Image
@@ -106,7 +106,7 @@ const Layout: React.FunctionComponent<{
                         </div>
                         <div className="mt-8 md:mt-10 mb-6 md:mb-8">
                             <h1
-                                className="font-bold text-4xl md:text-7xl text-center tracking-tighter titleFont cursor-pointer"
+                                className="font-bold text-4xl md:text-7xl text-center tracking-tighter cursor-pointer"
                                 onClick={() => { route.push('/') }}
                             >
                                 Cartesian Theater

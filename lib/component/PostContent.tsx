@@ -38,6 +38,7 @@ const PostContent: React.FunctionComponent<{ postContent: Content }> = ({
             break;
         case 'bookmark':
             if (postContent.link) {
+                const host = new URL(postContent.link).host;
                 content = (
                     <div className="flex md:p-2 cursor-pointer w-full"
                         onClick={() => {
@@ -51,8 +52,11 @@ const PostContent: React.FunctionComponent<{ postContent: Content }> = ({
                             <div className="text-xs mt-2 text-gray-600 line-clamp-2 md:line-clamp-3 h-8 md:h-12">
                                 {postContent.description}
                             </div>
-                            <div className="text-xs mt-2 truncate">
-                                {postContent.link}
+                            <div className="mt-2 flex">
+                                <img src={`http://www.google.com/s2/favicons?domain=${host}`} className="h-[12px] my-auto mr-2" />
+                                <div className="text-xs truncate min-w-0">
+                                    {postContent.link}
+                                </div>
                             </div>
                         </div>
                         {postContent.ogpImageUrl && (
