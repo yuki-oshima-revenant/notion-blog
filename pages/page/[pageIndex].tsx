@@ -3,14 +3,16 @@ import { getDatabaseData, getPostIndex, getPosts, Post, PostIndex } from '@/lib/
 import PostBody from '@/lib/component/PostBody';
 import Layout from '@/lib/component/Layout';
 import Head from "next/head";
+import { pageOffset } from '@/lib/util/const';
+import moment from 'moment';
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const database = await getDatabaseData();
     const postsIndex = getPostIndex(database);
 
     const slicedPostIndex: PostIndex[][] = [];
-    for (let i = 0; i < postsIndex.length; i += 10) {
-        slicedPostIndex.push(postsIndex.slice(i, i + 10));
+    for (let i = 0; i < postsIndex.length; i += pageOffset) {
+        slicedPostIndex.push(postsIndex.slice(i, i + pageOffset));
     }
     return { paths: slicedPostIndex.map((_, i) => ({ params: { pageIndex: `${i + 1}` } })), fallback: 'blocking' }
 };
@@ -20,12 +22,13 @@ export const getStaticProps: GetStaticProps<{
     postsIndex: PostIndex[],
     pageIndex: string | null
 }> = async ({ params, preview }) => {
+    const startMoment = moment();
     const database = await getDatabaseData();
-    const posts = await getPosts(database);
+    const posts = await getPosts(database, startMoment);
     const postsIndex = getPostIndex(database)
     const slicedPosts: Post[][] = [];
-    for (let i = 0; i < posts.length; i += 10) {
-        slicedPosts.push(posts.slice(i, i + 10));
+    for (let i = 0; i < posts.length; i += pageOffset) {
+        slicedPosts.push(posts.slice(i, i + pageOffset));
     }
     if (params?.pageIndex && typeof params?.pageIndex === 'string') {
         return {

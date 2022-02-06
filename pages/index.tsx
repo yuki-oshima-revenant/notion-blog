@@ -3,14 +3,17 @@ import { Post, getPosts, getDatabaseData, PostIndex, getPostIndex } from '@/lib/
 import PostBody from '@/lib/component/PostBody';
 import Layout from '@/lib/component/Layout';
 import Head from "next/head";
+import { pageOffset } from '@/lib/util/const';
+import moment from 'moment';
 
 export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostIndex[] }> = async () => {
+    const startMoment = moment();
     const database = await getDatabaseData();
     // console.dir(database, { depth: null })
-    const posts = await getPosts(database);
+    const posts = await getPosts(database, startMoment);
     return {
         props: {
-            posts: posts.splice(0, 10),
+            posts: posts.splice(0, pageOffset),
             postsIndex: getPostIndex(database)
         },
         revalidate: 60
@@ -18,7 +21,6 @@ export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostInd
 }
 
 const Index = ({ posts, postsIndex }: InferGetStaticPropsType<typeof getStaticProps>) => {
-
     return (
         <div>
             <Head>

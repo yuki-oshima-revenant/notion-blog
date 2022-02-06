@@ -7,7 +7,7 @@ import { AiFillGithub, AiOutlineTwitter, AiOutlineArrowRight, AiOutlineArrowLeft
 import { SiNotion } from 'react-icons/si';
 // import { RiUnsplashFill } from 'react-icons/ri';
 import Image from 'next/image';
-import { headerImageLink } from '@/lib/util/const';
+import { headerImageLink, pageOffset } from '@/lib/util/const';
 
 type HierarchyIndex = {
     year: string,
@@ -188,7 +188,7 @@ const Layout: React.FunctionComponent<{
                                                 </Link>
                                             )}
                                             <div className="flex-grow" />
-                                            {(!ymd && !pageIndex) || (pageIndexInt && pageIndexInt * 10 < postsIndex.length) && (
+                                            {(!ymd && !pageIndex) || (pageIndexInt && pageIndexInt * pageOffset < postsIndex.length) && (
                                                 <Link href={`/page/${pageIndexInt + 1}`}>
                                                     <a>
                                                         <AiOutlineArrowRight />

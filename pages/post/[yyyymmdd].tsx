@@ -3,6 +3,7 @@ import { getDatabaseData, getPostIndex, getPosts, Post, PostIndex } from '@/lib/
 import PostBody from '@/lib/component/PostBody';
 import Layout from '@/lib/component/Layout';
 import Head from "next/head";
+import moment from 'moment';
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const database = await getDatabaseData();
@@ -16,12 +17,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps<{ post: Post | null, postsIndex: PostIndex[] }> = async ({ params, preview }) => {
+    const startMoment = moment();
+
     const database = await getDatabaseData();
     const postsIndex = getPostIndex(database);
 
     const targetPostIndex = postsIndex.find((index) => index.ymd === params?.yyyymmdd);
     if (targetPostIndex) {
-        const targetPost = await getPosts(database, [targetPostIndex.id]);
+        const targetPost = await getPosts(database, startMoment, [targetPostIndex.id]);
         return {
             props: {
                 post: targetPost[0],

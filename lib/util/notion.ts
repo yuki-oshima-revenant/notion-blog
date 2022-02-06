@@ -1,8 +1,8 @@
 import { Client } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import jsdom from 'jsdom';
+import moment, { Moment } from 'moment';
 const { JSDOM } = jsdom;
-
 
 export type PostIndex = {
     id: string,
@@ -40,6 +40,10 @@ export type Post = {
     contents: Content[]
 }
 
+async function timeout(msec: number) {
+    return new Promise((_, reject) => setTimeout(reject, msec))
+}
+
 const notion = new Client({
     auth: process.env.NOTION_SECRET,
 });
@@ -71,7 +75,7 @@ export const getDatabaseData = async (
 };
 
 
-export const getPosts = async (databaseResponse: QueryDatabaseResponse, ids?: string[]) => {
+export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMoment: Moment, ids?: string[]) => {
     const postContentPromises = [];
     if (ids) {
         ids.forEach(id => {
@@ -176,11 +180,13 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, ids?: st
                         content.title = document.getElementsByTagName('title')[0]?.innerText || null;
                     }
                 });
-                getOgpPromises.push(promise);
+                getOgpPromises.push(Promise.race([promise, timeout(8000 - moment().diff(startMoment))]));
             }
         }
     }
     await Promise.all(getOgpPromises);
+    console.log(`getPosts finished in ${moment().diff(startMoment)}ms`);
+
     return posts;
 }
 
