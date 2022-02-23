@@ -156,39 +156,43 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
         return post;
     });
     console.log(`getPostContents finished in ${moment().diff(startMoment)}ms / ids:${ids}`);
-    // const getOgpPromises = []
-    // for (const post of posts) {
-    //     for (const content of post.contents) {
-    //         if (content.type === 'bookmark' && content.link) {
-    //             const promise = fetch(content.link, { redirect: 'follow' }).then((res) => res.text()).then((text) => {
-    //                 const { document } = new JSDOM(text).window;
-    //                 const metatags = Array.from(document.getElementsByTagName('meta'));
-    //                 metatags.forEach((meta) => {
-    //                     const property = meta.getAttribute('property') || meta.getAttribute('name');
-    //                     switch (property) {
-    //                         case 'og:title' || 'twitter:title': {
-    //                             if (content.title) break;
-    //                             content.title = meta.getAttribute('content'); break;
-    //                         }
-    //                         case 'og:description' || 'twitter:description' || 'description': {
-    //                             if (content.description) break;
-    //                             content.description = meta.getAttribute('content'); break;
-    //                         }
-    //                         case 'og:image' || 'twitter:image': {
-    //                             if (content.ogpImageUrl) break;
-    //                             content.ogpImageUrl = meta.getAttribute('content'); break;
-    //                         }
-    //                     }
-    //                 });
-    //                 if (!content.title || content.title.length === 0) {
-    //                     content.title = document.getElementsByTagName('title')[0]?.innerText || null;
-    //                 }
-    //             });
-    //             getOgpPromises.push(Promise.race([promise, timeout(8000 - moment().diff(startMoment))]));
-    //         }
-    //     }
-    // }
-    // await Promise.all(getOgpPromises);
+    const getOgpPromises = []
+    for (const post of posts) {
+        for (const content of post.contents) {
+            if (content.type === 'bookmark' && content.link) {
+                const promise = fetch(content.link, { redirect: 'follow' }).then((res) => res.text()).then((text) => {
+                    const { document } = new JSDOM(text).window;
+                    const metatags = Array.from(document.getElementsByTagName('meta'));
+                    metatags.forEach((meta) => {
+                        const property = meta.getAttribute('property') || meta.getAttribute('name');
+                        switch (property) {
+                            case 'og:title' || 'twitter:title': {
+                                if (content.title) break;
+                                content.title = meta.getAttribute('content'); break;
+                            }
+                            case 'og:description' || 'twitter:description' || 'description': {
+                                if (content.description) break;
+                                content.description = meta.getAttribute('content'); break;
+                            }
+                            case 'og:image' || 'twitter:image': {
+                                if (content.ogpImageUrl) break;
+                                content.ogpImageUrl = meta.getAttribute('content'); break;
+                            }
+                        }
+                    });
+                    if (!content.title || content.title.length === 0) {
+                        content.title = document.getElementsByTagName('title')[0]?.innerText || null;
+                    }
+                });
+                getOgpPromises.push(Promise.race([promise, timeout(8000 - moment().diff(startMoment))]));
+            }
+        }
+    }
+    try {
+        await Promise.all(getOgpPromises);
+    } catch {
+
+    }
     console.log(`getPostOGPs finished in ${moment().diff(startMoment)}ms / ids:${ids}`);
 
     return posts;
