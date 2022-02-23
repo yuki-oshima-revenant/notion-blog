@@ -9,7 +9,6 @@ import moment from 'moment';
 export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostIndex[] }> = async () => {
     const startMoment = moment();
     const database = await getDatabaseData();
-    // console.dir(database, { depth: null })
     const posts = await getPosts(database, startMoment);
     return {
         props: {
