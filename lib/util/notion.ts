@@ -184,7 +184,7 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
                         content.title = document.getElementsByTagName('title')[0]?.innerText || null;
                     }
                 });
-                getOgpPromises.push(Promise.race([promise, timeout(9000 - moment().diff(startMoment))]));
+                getOgpPromises.push(Promise.race([promise, timeout(8000 - moment().diff(startMoment))]));
             }
         }
     }
