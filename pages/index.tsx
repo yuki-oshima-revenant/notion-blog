@@ -23,13 +23,7 @@ export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostInd
         if (e instanceof Error) {
             console.error(e.message);
         }
-        return {
-            props: {
-                posts: [],
-                postsIndex: []
-            },
-            revalidate: 60
-        }
+        throw e;
     }
 }
 

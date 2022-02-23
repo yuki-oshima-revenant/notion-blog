@@ -58,13 +58,7 @@ export const getStaticProps: GetStaticProps<{
         if (e instanceof Error) {
             console.error(e.message);
         }
-        return {
-            props: {
-                posts: null,
-                pageIndex: null,
-                postsIndex: []
-            },
-        };
+        throw e;
     }
 };
 
