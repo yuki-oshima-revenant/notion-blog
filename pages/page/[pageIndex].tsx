@@ -7,7 +7,8 @@ import { pageOffset } from '@/lib/util/const';
 import moment from 'moment';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const database = await getDatabaseData();
+    const startMoment = moment();
+    const database = await getDatabaseData(startMoment);
     const postsIndex = getPostIndex(database);
 
     const slicedPostIndex: PostIndex[][] = [];
@@ -22,33 +23,47 @@ export const getStaticProps: GetStaticProps<{
     postsIndex: PostIndex[],
     pageIndex: string | null
 }> = async ({ params, preview }) => {
-    const startMoment = moment();
-    const database = await getDatabaseData();
-    const posts = await getPosts(database, startMoment);
-    const postsIndex = getPostIndex(database)
-    const slicedPosts: Post[][] = [];
-    for (let i = 0; i < posts.length; i += pageOffset) {
-        slicedPosts.push(posts.slice(i, i + pageOffset));
-    }
-    if (params?.pageIndex && typeof params?.pageIndex === 'string') {
-        return {
-            props: {
-                posts: slicedPosts[parseInt(params.pageIndex, 10) - 1],
-                postsIndex,
-                pageIndex: params.pageIndex
-            },
-            revalidate: 60
+    try {
+        const startMoment = moment();
+        const database = await getDatabaseData(startMoment);
+        const posts = await getPosts(database, startMoment);
+        const postsIndex = getPostIndex(database)
+        const slicedPosts: Post[][] = [];
+        for (let i = 0; i < posts.length; i += pageOffset) {
+            slicedPosts.push(posts.slice(i, i + pageOffset));
         }
-    } else {
+        if (params?.pageIndex && typeof params?.pageIndex === 'string') {
+            return {
+                props: {
+                    posts: slicedPosts[parseInt(params.pageIndex, 10) - 1],
+                    postsIndex,
+                    pageIndex: params.pageIndex
+                },
+                revalidate: 60
+            }
+        } else {
+            return {
+                props: {
+                    posts: null,
+                    pageIndex: null,
+                    postsIndex
+                },
+                redirect: {
+                    destination: '/404'
+                }
+            };
+        }
+    } catch (e) {
+        console.error(`render failed in ${params?.pageIndex}`);
+        if (e instanceof Error) {
+            console.error(e.message);
+        }
         return {
             props: {
                 posts: null,
                 pageIndex: null,
-                postsIndex
+                postsIndex: []
             },
-            redirect: {
-                destination: '/404'
-            }
         };
     }
 };

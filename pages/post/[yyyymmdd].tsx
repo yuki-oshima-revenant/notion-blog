@@ -6,7 +6,8 @@ import Head from "next/head";
 import moment from 'moment';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const database = await getDatabaseData();
+    const startMoment = moment();
+    const database = await getDatabaseData(startMoment);
     const postsIndex = getPostIndex(database);
     const paths = postsIndex.map((index) => ({
         params: {
@@ -17,33 +18,46 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps<{ post: Post | null, postsIndex: PostIndex[] }> = async ({ params, preview }) => {
-    const startMoment = moment();
+    try {
+        const startMoment = moment();
+        const database = await getDatabaseData(startMoment);
+        const postsIndex = getPostIndex(database);
 
-    const database = await getDatabaseData();
-    const postsIndex = getPostIndex(database);
+        const targetPostIndex = postsIndex.find((index) => index.ymd === params?.yyyymmdd);
+        if (targetPostIndex) {
+            const targetPost = await getPosts(database, startMoment, [targetPostIndex.id]);
+            return {
+                props: {
+                    post: targetPost[0],
+                    postsIndex
+                },
+                revalidate: 60,
+            }
 
-    const targetPostIndex = postsIndex.find((index) => index.ymd === params?.yyyymmdd);
-    if (targetPostIndex) {
-        const targetPost = await getPosts(database, startMoment, [targetPostIndex.id]);
-        return {
-            props: {
-                post: targetPost[0],
-                postsIndex
-            },
-            revalidate: 60,
+        } else {
+            return {
+                props: {
+                    post: null,
+                    postsIndex
+                },
+                redirect: {
+                    destination: '/404'
+                }
+            };
         }
-
-    } else {
+    } catch (e) {
+        console.error(`render failed in ${params?.yyyymmdd}`);
+        if (e instanceof Error) {
+            console.error(e.message);
+        }
         return {
             props: {
                 post: null,
-                postsIndex
+                postsIndex: []
             },
-            redirect: {
-                destination: '/404'
-            }
         };
     }
+
 }
 
 const Index = ({ post, postsIndex }: InferGetStaticPropsType<typeof getStaticProps>) => {

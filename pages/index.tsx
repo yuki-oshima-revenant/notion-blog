@@ -7,15 +7,29 @@ import { pageOffset } from '@/lib/util/const';
 import moment from 'moment';
 
 export const getStaticProps: GetStaticProps<{ posts: Post[], postsIndex: PostIndex[] }> = async () => {
-    const startMoment = moment();
-    const database = await getDatabaseData();
-    const posts = await getPosts(database, startMoment);
-    return {
-        props: {
-            posts: posts.splice(0, pageOffset),
-            postsIndex: getPostIndex(database)
-        },
-        revalidate: 60
+    try {
+        const startMoment = moment();
+        const database = await getDatabaseData(startMoment);
+        const posts = await getPosts(database, startMoment);
+        return {
+            props: {
+                posts: posts.splice(0, pageOffset),
+                postsIndex: getPostIndex(database)
+            },
+            revalidate: 60
+        }
+    } catch (e) {
+        console.error(`render failed in /`);
+        if (e instanceof Error) {
+            console.error(e.message);
+        }
+        return {
+            props: {
+                posts: [],
+                postsIndex: []
+            },
+            revalidate: 60
+        }
     }
 }
 

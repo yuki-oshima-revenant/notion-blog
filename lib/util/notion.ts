@@ -50,8 +50,9 @@ const notion = new Client({
 
 export const getDatabaseData = async (
     // startCursor?: string, pageSize?: number
+    startMoment: Moment,
 ) => {
-    return notion.databases.query({
+    const database = await notion.databases.query({
         database_id: process.env.NOTION_DATABASE_ID || '',
         filter: {
             or: [
@@ -72,6 +73,8 @@ export const getDatabaseData = async (
         // start_cursor: startCursor,
         // page_size: pageSize
     });
+    console.log(`getDatabaseData finished in ${moment().diff(startMoment)}ms`);
+    return database;
 };
 
 
@@ -152,6 +155,7 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
         });
         return post;
     });
+    console.log(`getPostContents finished in ${moment().diff(startMoment)}ms / ids:${ids}`);
     const getOgpPromises = []
     for (const post of posts) {
         for (const content of post.contents) {
@@ -185,7 +189,7 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
         }
     }
     await Promise.all(getOgpPromises);
-    console.log(`getPosts finished in ${moment().diff(startMoment)}ms`);
+    console.log(`getPostOGPs finished in ${moment().diff(startMoment)}ms / ids:${ids}`);
 
     return posts;
 }
