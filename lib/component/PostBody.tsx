@@ -13,7 +13,7 @@ const PostBody: React.FunctionComponent<{
             <div key={`${post.title}_content`} className={"mb-12"}>
                 <div className="mb-2">
                     <h2
-                        className="text-2xl font-bold cursor-pointer"
+                        className="text-2xl font-bold cursor-pointer tracking-tight"
                         onClick={() => { router.push(`/post/${post.ymd}`) }}
                     >{post.title}</h2>
                     <div className="text-gray-500 text-sm my-1">

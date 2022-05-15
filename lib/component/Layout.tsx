@@ -106,7 +106,7 @@ const Layout: React.FunctionComponent<{
                         </div>
                         <div className="mt-8 md:mt-10 mb-6 md:mb-8">
                             <h1
-                                className="font-bold text-4xl md:text-7xl text-center tracking-tighter cursor-pointer"
+                                className="font-bold text-4xl md:text-7xl text-center tracking-[-0.07em] cursor-pointer"
                                 onClick={() => { route.push('/') }}
                             >
                                 Cartesian Theater
