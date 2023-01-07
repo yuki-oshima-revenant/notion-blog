@@ -1,0 +1,7 @@
+{
+    "functions": {
+        "api/ogp.tsx": {
+            "excludeFiles": "node_modules/typescript/**/*"
+        }
+    }
+}
