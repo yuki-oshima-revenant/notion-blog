@@ -5,7 +5,6 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import * as playwright from "playwright-aws-lambda";
 import { headerImageLink } from "@/lib/util/const";
-// import Image from 'next/image';
 
 const Template: React.FunctionComponent<{
     title?: string, font: string;

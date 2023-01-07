@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "@/lib/util/notion";
 import Prism from 'prismjs'
-import Image from 'next/image';
 
 const PostContent: React.FunctionComponent<{ postContent: Content }> = ({
     postContent
