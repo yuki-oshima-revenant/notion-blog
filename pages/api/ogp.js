@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import path from 'path';
 import fs from 'fs';
 import React from 'react';
@@ -6,13 +5,11 @@ import ReactDOMServer from 'react-dom/server';
 import * as playwright from "playwright-aws-lambda";
 import { headerImageLink } from "@/lib/util/const";
 
-const Template: React.FunctionComponent<{
-    title?: string, font: string;
-}> = ({
+const Template = ({
     title,
     font
 }) => {
-        const getCss = (font: string) => `
+    const getCss = (font) => `
         @font-face {
         font-family: 'Inter';
         font-weight: bold;
@@ -63,36 +60,36 @@ const Template: React.FunctionComponent<{
         }
   `;
 
-        return (
-            <html>
-                <style dangerouslySetInnerHTML={{ __html: getCss(font) }} />
-                <body>
-                    <div className="wrapper">
-                        <img
-                            className="bgImage"
-                            src={headerImageLink}
-                            width={1200}
-                            height={630}
-                        />
-                        <div className="card">
-                            <div className="titleWrap">
-                                {title && (
-                                    <span>
-                                        {`${title} / `}
-                                    </span>
-                                )}
-                                <span className="title">
-                                    Cartesian Theater
+    return (
+        <html>
+            <style dangerouslySetInnerHTML={{ __html: getCss(font) }} />
+            <body>
+                <div className="wrapper">
+                    <img
+                        className="bgImage"
+                        src={headerImageLink}
+                        width={1200}
+                        height={630}
+                    />
+                    <div className="card">
+                        <div className="titleWrap">
+                            {title && (
+                                <span>
+                                    {`${title} / `}
                                 </span>
-                            </div>
+                            )}
+                            <span className="title">
+                                Cartesian Theater
+                            </span>
                         </div>
                     </div>
-                </body>
-            </html>
-        )
-    };
+                </div>
+            </body>
+        </html>
+    );
+};
 
-function getHtml({ title }: { title?: string }): string {
+function getHtml({ title }) {
     const fontPath = path.resolve(
         process.cwd(),
         "./assets/Inter-Bold.ttf"
@@ -117,9 +114,9 @@ async function getLaunchOptions() {
     }
 }
 
-const Ogp = async (req: NextApiRequest, res: NextApiResponse) => {
+const Ogp = async (req, res) => {
     try {
-        let title: string | undefined;
+        let title;
         if (typeof req.query.title === 'string') {
             title = decodeURIComponent(req.query.title);
         }
