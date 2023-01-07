@@ -39,6 +39,7 @@ const Template: React.FunctionComponent<{
 
         .bgImage {
             object-fit: cover;
+            filter: blur(8px);
         }
 
         .card {

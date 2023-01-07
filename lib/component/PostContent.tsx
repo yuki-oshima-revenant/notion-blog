@@ -21,12 +21,12 @@ const PostContent: React.FunctionComponent<{ postContent: Content }> = ({
             break;
         case 'heading_2':
             content = (
-                <h2 className="text-xl font-medium font-sans"> {postContent.text}</h2>
+                <h2 className="text-xl font-bold"> {postContent.text}</h2>
             );
             break;
         case 'heading_3':
             content = (
-                <h3 className="text-lg font-medium font-sans"> {postContent.text}</h3>
+                <h3 className="text-base font-bold"> {postContent.text}</h3>
             );
             break;
         case 'quote':
@@ -45,7 +45,7 @@ const PostContent: React.FunctionComponent<{ postContent: Content }> = ({
                             window.open(postContent.link || '')
                         }}
                     >
-                        <div className="flex-grow p-3 md:p-4 border border-r-0 w-1/2">
+                        <div className={`flex-grow p-3 md:p-4 border ${postContent.ogpImageUrl && "border-r-0"}  w-1/2`}>
                             <div className="truncate h-4 text-sm">
                                 {postContent.title}
                             </div>

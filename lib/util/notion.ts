@@ -92,12 +92,19 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
     const postContents = await Promise.all(postContentPromises);
     const posts: Post[] = postContents.map((postContent, i) => {
         const page = ids ? databaseResponse.results.find((result) => result.id === ids[i]) : databaseResponse.results[i];
-        // @ts-ignore
-        const date: string = page.properties.date.date.start;
+        let date = '';
+        let title = '';
+        if (page && 'properties' in page) {
+            if (page.properties.date.type === 'date') {
+                date = page.properties.date.date?.start ?? '';
+            }
+            if (page.properties.post.type === 'title') {
+                title = page.properties.post.title[0]?.plain_text ?? '';
+            }
+        }
         const post: Post = {
             id: page?.id || '',
-            // @ts-ignore
-            title: page?.properties.post.title[0].plain_text,
+            title,
             date,
             ymd: date.replace(/-/g, ''),
             createdTs: page?.created_time || '',
@@ -200,12 +207,19 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
 
 export const getPostIndex = (response: QueryDatabaseResponse) => {
     const postIndex: PostIndex[] = response.results.map((result) => {
-        // @ts-ignore
-        const ymd = (result.properties.date.date.start as string).replace(/-/g, '');
+        let ymd = '';
+        let title = '';
+        if ('properties' in result) {
+            if (result.properties.date.type === 'date') {
+                ymd = result.properties.date.date?.start.replace(/-/g, '') ?? '';
+            }
+            if (result.properties.post.type === 'title' && result.properties.post.title[0]?.type === 'text') {
+                title = result.properties.post.title[0]?.text.content ?? '';
+            }
+        }
         return {
             id: result.id,
-            // @ts-ignore
-            title: result.properties.post.title[0].text.content as string,
+            title,
             ymd,
             year: ymd.substring(0, 4),
             month: ymd.substring(4, 6),
