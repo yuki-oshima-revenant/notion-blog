@@ -160,8 +160,9 @@ const Layout: React.FunctionComponent<{
                                                                     {days.map(({ date, ymd }) => (
                                                                         <li key={ymd}>
                                                                             <Link
+                                                                                className="underline"
                                                                                 href={`/post/${encodeURIComponent(ymd)}`}>
-                                                                                <a className="underline">{date}</a>
+                                                                                {date}
                                                                             </Link>
                                                                         </li>
                                                                     ))}
@@ -182,17 +183,13 @@ const Layout: React.FunctionComponent<{
                                         <div className="text-2xl flex">
                                             {(pageIndexInt && pageIndexInt > 1) && (
                                                 <Link href={`/page/${pageIndexInt - 1}`}>
-                                                    <a>
-                                                        <AiOutlineArrowLeft />
-                                                    </a>
+                                                    <AiOutlineArrowLeft />
                                                 </Link>
                                             )}
                                             <div className="flex-grow" />
                                             {(!ymd && !pageIndex) || (pageIndexInt && pageIndexInt * pageOffset < postsIndex.length) && (
                                                 <Link href={`/page/${pageIndexInt + 1}`}>
-                                                    <a>
-                                                        <AiOutlineArrowRight />
-                                                    </a>
+                                                    <AiOutlineArrowRight />
                                                 </Link>
                                             )}
                                         </div>
