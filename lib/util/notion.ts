@@ -98,8 +98,8 @@ export const getPosts = async (databaseResponse: QueryDatabaseResponse, startMom
             if (page.properties.date.type === 'date') {
                 date = page.properties.date.date?.start ?? '';
             }
-            if (page.properties.post.type === 'title') {
-                title = page.properties.post.title[0]?.plain_text ?? '';
+            if (page.properties.title.type === 'title') {
+                title = page.properties.title.title[0]?.plain_text ?? '';
             }
         }
         const post: Post = {
@@ -213,8 +213,8 @@ export const getPostIndex = (response: QueryDatabaseResponse) => {
             if (result.properties.date.type === 'date') {
                 ymd = result.properties.date.date?.start.replace(/-/g, '') ?? '';
             }
-            if (result.properties.post.type === 'title' && result.properties.post.title[0]?.type === 'text') {
-                title = result.properties.post.title[0]?.text.content ?? '';
+            if (result.properties.title.type === 'title' && result.properties.title.title[0]?.type === 'text') {
+                title = result.properties.title.title[0]?.text.content ?? '';
             }
         }
         return {
